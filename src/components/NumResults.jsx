@@ -1,10 +1,10 @@
 import React from 'react';
 
-const NumResults = () => {
+const NumResults = ({ movies }) => {
     return (
-        <div>
-            NumResults
-        </div>
+        <p className="num-results">
+            Found <strong>{movies.length}</strong> results
+        </p>
     );
 }
 

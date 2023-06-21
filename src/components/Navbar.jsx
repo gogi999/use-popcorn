@@ -1,10 +1,13 @@
 import React from 'react';
 
-const Navbar = () => {
+import Logo from './Logo';
+
+const Navbar = ({ children }) => {
     return (
-        <div>
-            Navbar
-        </div>
+        <nav className="nav-bar">
+            <Logo />
+            {children}
+        </nav>
     );
 }
 

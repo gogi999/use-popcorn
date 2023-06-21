@@ -2,8 +2,9 @@ import React from 'react';
 
 const Logo = () => {
     return (
-        <div>
-            Logo
+        <div className="logo">
+            <span role="img">🍿</span>
+            <h1>usePopcorn</h1>
         </div>
     );
 }

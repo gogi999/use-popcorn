@@ -1,10 +1,15 @@
 import React from 'react';
 
-const MovieList = () => {
+import Movie from './Movie';
+
+const MovieList = ({ movies }) => {
+
     return (
-        <div>
-            MovieList
-        </div>
+        <ul className="list">
+            {movies?.map((movie) => (
+                <Movie key={movie.imdbID} movie={movie} />
+            ))}
+        </ul>
     );
 }
 
