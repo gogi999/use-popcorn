@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+import React, {
+  useEffect,
+  useState,
+} from 'react';
 
 import Box from './components/Box';
 import Main from './components/Main';
@@ -8,14 +11,18 @@ import NumResults from './components/NumResults';
 import Search from './components/Search';
 import WatchedMoviesList from './components/WatchedMoviesList';
 import WatchedSummary from './components/WatchedSummary';
-import {
-  tempMovieData,
-  tempWatchedData,
-} from './tempData';
+
+const KEY = process.env.REACT_APP_OMDB_API_KEY;
 
 const App = () => {
-    const [movies, setMovies] = useState(tempMovieData);
-    const [watched, setWatched] = useState(tempWatchedData);
+    const [movies, setMovies] = useState([]);
+    const [watched, setWatched] = useState([]);
+
+    useEffect(() => {
+        fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=godfather`)
+            .then((res) => res.json())
+            .then((data) => setMovies(data.Search));
+    }, []);
 
     return (
         <>
