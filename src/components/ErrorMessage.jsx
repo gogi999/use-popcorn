@@ -1,10 +1,10 @@
 import React from 'react';
 
-const ErrorMessage = () => {
+const ErrorMessage = ({ message }) => {
     return (
-        <div>
-            ErrorMessage
-        </div>
+        <p className="error">
+            <span>⛔️</span> {message}
+        </p>
     );
 }
 
