@@ -18,7 +18,7 @@ import WatchedSummary from './components/WatchedSummary';
 const KEY = process.env.REACT_APP_OMDB_API_KEY;
 
 const App = () => {
-    const [query, setQuery] = useState('godfather');
+    const [query, setQuery] = useState('');
     const [movies, setMovies] = useState([]);
     const [watched, setWatched] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -41,12 +41,17 @@ const App = () => {
     console.log('During render');
     */
     useEffect(() => {
+        const controller = new AbortController();
+
         const fetchMovies = async () => {
             try {
                 setIsLoading(true);
                 setError('');
 
-                const res = await fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=${query}`);
+                const res = await fetch(
+                    `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
+                    { signal: controller.signal },    
+                );
 
                 if (!res.ok) throw new Error('Something went wrong with fetching movies!');
 
@@ -55,9 +60,14 @@ const App = () => {
                 if (data.Response === 'False') throw new Error('Movie not found!');
 
                 setMovies(data.Search);
+                setError('');
             } catch (err) {
                 console.error(err.message);
-                setError(err.message);
+
+                if (err.name !== 'AbortError') {
+                    console.log(err.message);
+                    setError(err.message);
+                }
             } finally {
                 setIsLoading(false);
             }
@@ -69,7 +79,12 @@ const App = () => {
             return;
         }
 
+        handleCloseMovie();
         fetchMovies();
+
+        return () => {
+            controller.abort();
+        };
     }, [query]);
 
     const handleSelectMovie = (id) => {
@@ -82,6 +97,10 @@ const App = () => {
 
     const handleAddWatched = (movie) => {
         setWatched((watched) => [...watched, movie]);
+    }
+
+    const handleDeleteWatched = (id) => {
+        setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
     }
 
     return (
@@ -106,12 +125,16 @@ const App = () => {
                         <MovieDetails 
                             selectedId={selectedId} 
                             onCloseMovie={handleCloseMovie} 
-                            onAddWatched={handleAddWatched}    
+                            onAddWatched={handleAddWatched}
+                            watched={watched}    
                         />
                     ) : (
                         <>
                             <WatchedSummary watched={watched} />
-                            <WatchedMoviesList watched={watched} />
+                            <WatchedMoviesList 
+                                watched={watched} 
+                                onDeleteWatched={handleDeleteWatched} 
+                            />
                         </>
                     )}
                 </Box>
