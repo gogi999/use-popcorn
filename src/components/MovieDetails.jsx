@@ -1,8 +1,10 @@
 import React, {
   useEffect,
+  useRef,
   useState,
 } from 'react';
 
+import { useKey } from '../hooks/useKey';
 import Loader from './Loader';
 import StarRating from './StarRating';
 
@@ -12,6 +14,12 @@ const MovieDetails = ({ selectedId, onCloseMovie, onAddWatched, watched }) => {
     const [movie, setMovie] = useState({});
     const [isLoading, setIsLoading] = useState(false);
     const [userRating, setUserRating] = useState('');
+
+    const countRef = useRef(0);
+
+    useEffect(() => {
+        if (userRating) countRef.current++;
+    }, [userRating]);
 
     const isWatched = watched.map((movie) => movie.imdbID).includes(selectedId);
     const watchedUserRating = watched.find(
@@ -43,8 +51,8 @@ const MovieDetails = ({ selectedId, onCloseMovie, onAddWatched, watched }) => {
     }, [imdbRating]);
     */
 
-    const isTop = imdbRating > 8;
-    console.log(isTop);
+    // const isTop = imdbRating > 8;
+    // console.log(isTop);
 
     // const [avgRating, setAvgRating] = useState(0);
 
@@ -57,6 +65,7 @@ const MovieDetails = ({ selectedId, onCloseMovie, onAddWatched, watched }) => {
             imdbRating: Number(imdbRating),
             runtime: Number(runtime.split(' ').at(0)),
             userRating,
+            countRatingDecisions: countRef.current,
         }
 
         onAddWatched(newWatchedMovie);
@@ -66,6 +75,8 @@ const MovieDetails = ({ selectedId, onCloseMovie, onAddWatched, watched }) => {
         // setAvgRating((avgRating) => (avgRating + userRating) / 2);
     }
 
+    useKey('Escape', onCloseMovie)
+    /*
     useEffect(() => {
         const callback = (e) => {
             if (e.code === 'Escape') {
@@ -77,7 +88,7 @@ const MovieDetails = ({ selectedId, onCloseMovie, onAddWatched, watched }) => {
 
         return () => document.removeEventListener('keydown', callback);
     }, [onCloseMovie]);
-
+    */
     useEffect(() => {
         const getMovieDetails = async () => {
             setIsLoading(true);
